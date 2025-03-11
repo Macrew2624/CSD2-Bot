@@ -1,10 +1,24 @@
-from PIL import Image
+from PIL import Image, ImageEnhance, ImageOps
 import pytesseract
 import numpy as np
 import pyautogui
 import keyboard
 import string
 import time
+
+
+def preprocess_image(img):
+    enhancer = ImageEnhance.Brightness(img)
+    img = enhancer.enhance(0.3)
+
+    enhancer = ImageEnhance.Contrast(img)
+    img = enhancer.enhance(2)
+
+    img = ImageOps.invert(img)
+
+    enhancer = ImageEnhance.Contrast(img)
+    img = enhancer.enhance(2)
+    return img
 
 
 def take_recipe_name():
@@ -19,6 +33,7 @@ def take_recipe_name():
     return text
 
 
+# I fucking hate the fact that pixel colors change based on if HDR is enabled or not AND on screen brightness
 def pixel_color(i, j):
     region = (i, j, 1, 1)
     screenshot = pyautogui.screenshot(region=region)
@@ -29,18 +44,6 @@ def pixel_color(i, j):
     img1 = Image.open(filename)
     color = img1.getpixel((0, 0))
     return color
-
-
-def get_ingredient(i, j, l, w):
-    region = (i, j, l, w)
-    screenshot = pyautogui.screenshot(region=region)
-    save_path = r'C:\Users\Tudor Macri\PycharmProjects\CSDBot\image_03.png'
-    screenshot.save(save_path)
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-    filename = 'image_03.png'
-    img1 = np.array(Image.open(filename))
-    text = pytesseract.image_to_string(img1, config=r"--psm 6")
-    return text
 
 
 def take_screenshot(i, j, l, w):
@@ -67,14 +70,14 @@ def variety_solver(name):
     choices = 0
     save_path = take_screenshot(608, 1310, 1405, 60)
     img = Image.open(save_path)
-    img_array = np.array(img)
+    img_array = np.array(preprocess_image(img))
     for i in range(5):
-        current_pixel_color = pixel_color_image(260 * i, 0, img)
-        if current_pixel_color == (163, 89, 255) or current_pixel_color == (255, 88, 89) or current_pixel_color == (250, 184, 58):
+        current_pixel_color = pixel_color_image(1 + 260 * i, 1, img)
+        if current_pixel_color == (122, 65, 201) or current_pixel_color == (201, 65, 65) or current_pixel_color == (189, 138, 41):
             choices += 1
-    print(choices)
+    print(f"{choices} Ingredients: ")
     for i in range(choices):
-        option = get_ingredient_image(0, 59, 260 * i + 25, 260 * i + 25 + 200 + 100 * int(i == choices - 1), img_array).strip()
+        option = get_ingredient_image(0, 59, 260 * i + 25, 260 * i + 25 + 200 + 75 * int(i == choices - 1), img_array).strip()
         print(option)
         option = option.replace('(', '').replace(')', '').replace('|', '')
         if option[len(option) - 1].isdigit():
@@ -82,7 +85,6 @@ def variety_solver(name):
         else:
             new_ingredient = [option.translate(str.maketrans('', '', string.digits)).strip()]
         ingredients.extend(new_ingredient)
-
     print(ingredients)
     parts = 0
     match name:
@@ -650,8 +652,12 @@ def variety_solver(name):
                             press('h')
                         case "Cilantro":
                             press('c')
+                        case "Close":
+                            press('l')
                         case "Cooking Oil":
                             press('o')
+                        case "Corndog":
+                            press('c')
                         case "Corn Cobs":
                             press('c')
                         case "Croutons":
@@ -916,107 +922,163 @@ def variety_solver(name):
         case _:
             print("Invalid recipe")
 
+def salsa_solver():
+    ingredients = []
+    choices = [0, 0]
+    save_path = take_screenshot(608, 1310, 1405, 120)
+    img = Image.open(save_path)
+    img_array = np.array(preprocess_image(img))
+    for j in range(2):
+        for i in range(5):
+            current_pixel_color = pixel_color_image(1 + 260 * i, 1 + 50 * j, img)
+            if current_pixel_color == (122, 65, 201) or current_pixel_color == (201, 65, 65) or current_pixel_color == (189, 138, 41):
+                choices[j] += 1
+    print(f"{choices} Ingredients: ")
+    for j in range(2):
+        for i in range(choices[j]):
+            option = get_ingredient_image(0 + 50 * j, 59 + 50 * j, 260 * i + 25, 260 * i + 25 + 200 + 75 * int(i == choices[j] - 1), img_array).strip()
+            print(option)
+            option = option.replace('(', '').replace(')', '').replace('|', '')
+            if option[len(option) - 1].isdigit():
+                new_ingredient = [option.translate(str.maketrans('', '', string.digits)).strip()] * int(option[len(option) - 1])
+            else:
+                new_ingredient = [option.translate(str.maketrans('', '', string.digits)).strip()]
+            ingredients.extend(new_ingredient)
+    print(ingredients)
+    match ingredients[len(ingredients) - 1]:
+        case "Red Salsa":
+            press('r')
+        case "G.Salsa":
+            press('g')
+        case "Guacamole":
+            press('u')
+        case "Pico Salsa":
+            press('p')
+        case "R.Corn Sal.":
+            press('o')
+    press('enter')
+    time.sleep(0.5)
 
 def solver(name):
     match name:
         case "01. Classic Tacos":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('m, space, s, r, t, space, l, c, g, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('m, space, s, r, t, space, l, c')
+                salsa_solver()
             else:
                 press('m, o, enter')
         case "02. Beyond the Border":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('m, space, s, r, t, n, space, l, c, o, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('m, space, s, r, t, n, space, l, c')
+                salsa_solver()
             else:
                 press('m, o, enter')
         case "03. Crunch Time":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('m, space, q, r, a, space, l, z, g, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('m, space, q, r, a, space, l, z')
+                salsa_solver()
             else:
                 press('m, o, enter')
         case "04. Nebraska Style":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('m, space, l, r, a, space, l, c, g enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('m, space, l, r, a, space, l, c')
+                salsa_solver()
             else:
                 press('m, o, enter')
         case "05. Juarez Nights":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('m, space, s, r, t, n, space, g, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('m, space, s, r, t, n, space')
+                salsa_solver()
             else:
                 press('m, o, enter')
         case "06. The Loco Taco":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('m, space, z, a, n, space, p, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('m, space, z, a, n, space')
+                salsa_solver()
             else:
                 press('m, o, enter')
         case "07. Mexican Delight":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('m, space, l, a, t, space, l, z, p, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('m, space, l, a, t, space, l, z')
+                salsa_solver()
             else:
                 press('m, o, enter')
         case "08. Spain Fame":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('m, space, q, s, r, t, space, l, u, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('m, space, q, s, r, t, space, l')
+                salsa_solver()
             else:
                 press('m, o, enter')
         case "09. Chicken Tacos":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('k, space, s, r, t, n, space, l, c, p, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, space, s, r, t, n, space, l, c')
+                salsa_solver()
             else:
                 press('k, o, enter')
         case "10. The Mexican Chicken":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('k, space, z, a, n, space, p, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, space, z, a, n, space')
+                salsa_solver()
             else:
                 press('k, o, enter')
         case "11. Feathered Pockets":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('k, space, l, r, t, n, space, l, c, z, g, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, space, l, r, t, n, space, l, c, z')
+                salsa_solver()
             else:
                 press('k, o, enter')
         case "12. The Fiesta":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('k, space, s, r, t, space, l, c, u, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, space, s, r, t, space, l, c')
+                salsa_solver()
             else:
                 press('k, o, enter')
-        case "13. Beef Supreme":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('b, space, s, r, t, space, l, c, g, enter')
+        case "13. Beef Surpreme":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, space, s, r, t, space, l, c')
+                salsa_solver()
             else:
                 press('b, o, enter')
         case "14. The Siesta":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('b, space, s, r, t, n, space, l, c, z, p, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, space, s, r, t, n, space, l, c, z')
+                salsa_solver()
             else:
                 press('b, o, enter')
         case "15. Beefy Afternoon":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('b, space, z, r, a space, l, o, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, space, z, r, a, space, l')
+                salsa_solver()
             else:
                 press('b, o, enter')
         case "16. Beef Buffs":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('b, space, q, z, r, n, space, r, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, space, q, z, r, n, space')
+                salsa_solver()
             else:
                 press('b, o, enter')
         case "17. Pacific Tacos":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('f, space, s, r, t, space, l, c, r, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('f, space, s, r, t, space, l, c')
+                salsa_solver()
             else:
                 press('f, o, enter')
         case "18. Fish Tacos":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('f, space, s, r, space, l, z, r, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('f, space, s, r, space, l, z')
+                salsa_solver()
             else:
                 press('f, o, enter')
         case "19. Gulf Beachside":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('f, space, z, r, a, t, n, space, o, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('f, space, z, r, a, t, n, space')
+                salsa_solver()
             else:
                 press('f, o, enter')
         case "20. Fisherman's Taco":
-            if pixel_color(2305, 775) == (130, 44, 44):
-                press('f, space, z, r, t, n, space, l, c, z, o, enter')
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('f, space, z, r, t, n, space, l, c, z')
+                salsa_solver()
             else:
                 press('f, o, enter')
 
@@ -1030,32 +1092,32 @@ def solver(name):
             variety_solver(name)
 
         case "01. Shrimp Press":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('h, r, v, t, space, t, enter')
             else:
                 press('p, o, h, enter')
         case "02. Seagreen Delight":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('h, b, m, p, space, s, e, enter')
             else:
                 press('p, o, h, enter')
         case "03. Ocean Park":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('h, r, t, m, p, space, t, enter')
             else:
                 press('p, o, h, enter')
         case "04. The Spinach Pile":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('r, n, space, s, e, enter')
             else:
                 press('p, enter')
         case "05. Healthy Living":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('m, p, space, t, enter')
             else:
                 press('p, enter')
         case "06. Verde Light":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('r, n, b, space, e, enter')
             else:
                 press('p, enter')
@@ -1071,42 +1133,42 @@ def solver(name):
             press('u, s, enter')
 
         case "01. Classic Ramen Bowl":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('b, m, space, k, m, n, space, s, enter')
             else:
                 press('r, o, b, m, enter')
         case "02. Kakuni Spa":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('k, space, u, c, r, k, space, t, enter')
             else:
                 press('r, o, k, enter')
         case "03. Elevated Bowl":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('p, space, c, r, e, m, space, t, enter')
             else:
                 press('r, o, p, enter')
         case "04. Salty Coast":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('c, m, space, r, e, m, space, c, p, t, enter')
             else:
                 press('r, o, c, m, enter')
         case "05. Spicy Bowl":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('s, k, space, c, e, space, c, t, enter')
             else:
                 press('r, o, s, k, enter')
         case "06. Nori and Friends":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('p, b, space, u, k, n, space, s, enter')
             else:
                 press('r, o, p, b, enter')
         case "07. Sleeper Bowl":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('m, h, space, e, k, m, space, p, enter')
             else:
                 press('r, o, m, h, enter')
         case "08. Hot Afternoon":
-            if pixel_color(2305, 775) == (130, 44, 44):
+            if pixel_color(2305, 775) == (97, 30, 30):
                 press('c, h, space, r, e, k, space, c, s, enter')
             else:
                 press('r, o, c, h, enter')
@@ -1293,165 +1355,132 @@ def solver(name):
         case "Bean Patty Prep":
             press('b, enter')
 
-        # Beer PS, Craft Beer PS
         case "Beer Pitcher":
             keyboard.press('p')
             time.sleep(1.3)
             keyboard.release('p')
             press('enter')
 
-        # Cannoli PS
         case "Cannoli Prep":
             press('c, d, enter')
 
-        # Chicken Nuggets PS
         case "01. Chicken Nugget Basket":
             press('n, d, enter')
 
         case "Chicken Prep":
             press('k, enter')
 
-        # Chicken Strips PS
         case "01. Chicken Strip Basket":
             press('s, d, enter')
 
-        # Chimichanga PS
         case "Chimichanga Prep":
             press('c, d, enter')
 
-        # Ice Cream Scoops PS #1
         case "Cone Prep":
             press('w, l, enter')
 
-        # Croissant SD
         case "Croissant Prep":
             press('c, enter')
 
-        # Ribs HS, Ribs PS
         case "Delicious Ribs":
             press("r, a, s, enter")
 
         case "Delicious Sopapillas":
             press("p, h, s, d, enter")
 
-        # Eggplant Parmigiana PS #1, Eggplant Parmigiana #2
         case "Eggplant Parmesan":
             press('o, e, t, p, r, enter')
 
-        # Side Egg Drop Soup SD
         case "Egg Drop Soup":
             press('e, c, m, enter')
 
-        # Fire Emergency Chore
         case "Emergency (FIRE)":
             keyboard.press('e')
             time.sleep(4)
             keyboard.release('e')
             press('enter')
 
-        # Juice Bar PS
         case "Fresh Juices":
             press('l, m, r, c, o, a, enter')
 
-        # Fresh Lemonade PS
         case "Fresh Lemonade":
             press("c, l, enter")
 
-        # Pineapple Juice PS
         case "Fresh Pineapple Juice":
             press('c, p, enter')
 
-        # Fried Okra SD
         case "Fried Okra (Holding Station)":
             for i in range(4):
                 press('o')
             press('d, enter')
 
-        # Funnel Cake PS #1
         case "Funnel Cake Prep":
             press('b, d, enter')
 
-        # Hash Browns SD
         case "Hash Browns (Holding Station)":
             for i in range(4):
                 press('h')
             press('d, enter')
 
-        # Horchata PS
         case "Horchata":
             press('c, h, enter')
 
-        # Hotdog PS #1
         case "Hotdog Prep":
             press("w, enter")
 
         case "Huge Turkey Leg":
             press('t, enter')
 
-        # Soda Fountain PS
         case "Ice Refill":
             press('o, i, s, enter')
 
-        # Marshmallow Squares SD
         case "Marshmallow Squares Prep":
             press('w, c, m, enter')
 
         case "Oatmeal Prep":
             press('o, enter')
 
-        # Onigiri SD
         case "Onigiri Mix (Holding Station)":
             press('r, i, s, h, n, enter')
 
-        # Onion Rings SD
         case "Onion Rings (Holding Station)":
             for i in range(4):
                 press('n')
             press('d, enter')
 
-        # Pakora SD
         case "Pakoras (Holding Station)":
             for i in range(4):
                 press('p')
             press('d, enter')
 
-        # Oatmeal SD
         case "Side Oatmeal Prep":
             press('o, enter')
 
-        # Steak Fingers PS
         case "Steak Finger Basket":
             press('s, d, enter')
 
-        # Tater Tots SD
         case "Tater Tots (Holding Station)":
             for i in range(4):
                 press('t')
             press('d, enter')
 
-        # Dishes Chore
         case "Work Ticket (Dishes)":
             press('d, w')
             time.sleep(2.5)
             press('r, u, s, enter')
 
-        # Pests Chore
         case "Work Ticket (Pests)":
             press('t, c, s, enter')
 
-        # Rat Traps Chore
         case "Work Ticket (Rat Traps)":
             press('l, c, s, enter')
 
-        # Restroom Chore
         case "Work Ticket (Restroom)":
             press('f, s, enter')
 
-        # Roach Traps Chore
         case "Work Ticket (Roach Traps)":
             press('t, s, enter')
 
-        # Trash Chore
         case "Work Ticket (Trash)":
             press('t')
             for i in range(10):
@@ -1472,22 +1501,18 @@ def solver(name):
         case "Custom Baked Wings Order":
             variety_solver(name)
 
-        # Ice Cream Sundae PS
         case "Custom Ice Cream Order":
             variety_solver(name)
 
-        # Ice Cream Scoops PS #2
         case "Custom Ice Cream Scoops":
             variety_solver(name)
 
-        # Taiwanese Shaved Ice PS
         case "Custom Shaved Ice Order":
             variety_solver(name)
 
         case "Custom Trad. Wings Order":
             variety_solver(name)
 
-        # Egg Rolls SD
         case "Egg Roll Mix":
             variety_solver(name)
 
@@ -1515,12 +1540,9 @@ def solver(name):
         case "Shrimp Mix (Holding Station)":
             variety_solver(name)
 
-        # Asparagus SD, Bacon SD, Baked Potato SD, Black Beans SD, Broccoli SD, Brussels Sprouts SD, Side Chow Mein SD, Corn on the Cob SD
-        # Sauerkraut SD, Edamame SD, German Red Cabbage SD, Green Beans SD
         case "Standard Prep (Holding Station)":
             variety_solver(name)
 
-        # Fries SD
         case "Variety Mix (Holding Station)":
             variety_solver(name)
 
@@ -1549,7 +1571,6 @@ def solver(name):
         case "02. Classic Pop. Shrimp Basket":
             press('p, d, enter')
 
-        # Dinner Roll SD
         case "01. White Bread Rolls":
             press('w, enter')
         case "02. Wheat Bread Rolls":
@@ -1572,7 +1593,6 @@ def solver(name):
         case "03. Almond Oatmeal":
             press('c, a, enter')
 
-        # Fruit Spread SD
         case "01. Spring Mix (Holding Station)":
             press('c, t, s, k, enter')
         case "02. Summer Mix (Holding Station)":
@@ -2035,7 +2055,6 @@ def solver(name):
             press('t, q, c, space, space, m, v, s, r, enter')
         case "20. Ham and Cheese":
             press('h, q, c, space, h, r, enter')
-
         case _:
             print("Invalid recipe")
 
@@ -2052,28 +2071,66 @@ def press(key):
 
 def calculate_hs_number():
     number_of_hs = 0
-    for i in range(502, 502 + 163 * 8, 163):
-        print(pixel_color(i, 0))
-        if pixel_color(i, 0) == (81, 81, 81):
+    for i in range(8):
+        if pixel_color(502 + 163 * i, 0) == (59, 59, 59):
             number_of_hs += 1
     return number_of_hs
 
 
 def calculate_ps_number():
     number_of_ps = 0
-    for i in range(151, 151 + 98 * 14, 98):
-        if pixel_color(0, i) == (158, 158, 158):
-                number_of_ps += 1
+    for i in range(14):
+        if pixel_color(0, 160 + 98 * i) == (118, 118, 118):
+            number_of_ps += 1
     return number_of_ps
 
 
 def calculate_hs_foods():
     counter = 0
-    for i in range(2155, 2155 + 205 * 2, 205):
-        for j in range(310, 310 + 133 * 4, 133):
-            if pixel_color(i, j) == (255, 255, 255):
+    for i in range(2):
+        for j in range(4):
+            if pixel_color(2155 + 205 * i, 310 + 133 * j) == (255, 255, 255):
                 counter += 1
     return counter
+
+
+def get_day_end():
+    region = (368, 293, 1740 - 368, 395 - 293)
+    screenshot = pyautogui.screenshot(region=region)
+    save_path = r'C:\Users\Tudor Macri\PycharmProjects\CSDBot\image_05.png'
+    screenshot.save(save_path)
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+    filename = 'image_05.png'
+    img1 = np.array(preprocess_image(Image.open(filename)))
+    text = pytesseract.image_to_string(img1, config='--psm 7')
+    return text
+
+
+def count_medals():
+    save_path = take_screenshot(1864, 249, 397, 212)
+    img = Image.open(save_path)
+    uncompleted_days = 0
+    for i in range(6):
+        for j in range(3):
+            print(pixel_color_image(5 + 69 * i, 32 + 75 * j, img))
+            current_pixel_color = pixel_color_image(5 + 67 * i, 30 + 75 * j, img)
+            if current_pixel_color == (192, 192, 192):
+                uncompleted_days += 1
+    return uncompleted_days
+
+
+def menu_navigator():
+    press('enter, enter')
+    restaurant_order = [2, 1, 5, 6, 7, 3, 4, 8, 12, 18, 24, 23, 17, 11, 10, 9, 15, 16, 22, 21, 27, 26, 20, 14, 13, 19, 25, 30, 31, 32, 33, 28, 29]
+    restaurants = []
+    with open('restaurants.txt', 'r') as f:
+        for line in f.readlines():
+            data = line.strip().split(',')
+            complete_shifts = data[2].split('/')[0]
+            total_shifts = data[2].split('/')[1]
+            restaurant = [int(data[0]), data[1], int(complete_shifts), int(total_shifts)]
+            restaurants.append(restaurant)
+    print(restaurants)
 
 
 def run():
@@ -2090,13 +2147,17 @@ def run():
     min_number_of_hs = min(number_of_hs, number_of_hs_required + number_of_hs_optional + number_of_side_dishes)
     number_of_hs_in_use = number_of_hs
 
-    print(number_of_hs, number_of_hs_required, number_of_hs_optional, number_of_side_dishes, number_of_hs_in_use, number_of_ps)
+    print("Number of Holding Stations: ", number_of_hs)
+    print("Number of Holding Stations Required: ", number_of_hs_required)
+    print("Number of Holding Stations Optional: ", number_of_hs_optional)
+    print("Number of Side Dishes: ", number_of_side_dishes)
+    print("Number of Holding Stations in Use: ", number_of_hs_in_use)
+    print("Number of Prep Stations: ", number_of_ps)
 
     holding_stations = [0] * number_of_hs_in_use
     prep_stations = [0] * number_of_ps
 
     hs_commands = []
-
     default_letter = 'a'
     if min_number_of_hs != 0:
         while len(hs_commands) < number_of_hs_in_use:
@@ -2112,16 +2173,22 @@ def run():
     else:
         number_of_hs_in_use = 0
 
-    print(hs_commands)
+    for i in range(len(hs_commands)):
+        print(f"Prep Station {i}: {hs_commands[i]}")
     current_ps = 0
+    print(get_day_end())
+    save_path = take_screenshot(0, 150, 440, 1520 - 150)
+    img = Image.open(save_path)
     while True:
         while True:
-            if pixel_color(33 + 7 * (current_ps // 10), 170 + 98 * current_ps) == (255, 255, 255):
-                if pixel_color(395, 208 + 98 * current_ps) == (78, 50, 137) or pixel_color(410, 201 + 98 * current_ps) == (207, 193, 237):
+            save_path = take_screenshot(0, 150, 440, 1520 - 150)
+            img = Image.open(save_path)
+            if pixel_color_image(33 + 7 * (current_ps // 10), 20 + 98 * current_ps, img) == (255, 255, 255):
+                if pixel_color_image(400, 51 + 98 * current_ps, img) == (57, 35, 102) or pixel_color_image(410, 54 + 98 * current_ps, img) == (156, 145, 179):
                     prep_stations[current_ps] = 1
-                elif pixel_color(389, 208 + 98 * current_ps) == (0, 216, 255):
+                elif pixel_color_image(400, 51 + 98 * current_ps, img) == (128, 0, 10):
                     prep_stations[current_ps] = 0
-                if prep_stations[current_ps] == 0 and pixel_color(389, 208 + 98 * current_ps) != (255, 255, 0) and pixel_color(389, 208 + 98 * current_ps) != (255, 28, 0):
+                if prep_stations[current_ps] == 0 and pixel_color_image(395, 45 + 98 * current_ps, img) != (251, 207, 1) and pixel_color_image(395, 45 + 98 * current_ps, img) != (255, 36, 0):
                     if current_ps < 9:
                         press(str(current_ps + 1).strip())
                     elif current_ps == 9:
@@ -2135,24 +2202,18 @@ def run():
                     elif current_ps == 13:
                         press(']')
                     recipe_name = take_recipe_name().strip()
-                    print('Recipe Name:', recipe_name)
                     if recipe_name != "":
+                        print('Recipe Name: ', recipe_name)
                         solver(recipe_name)
             current_ps += 1
             if current_ps == number_of_ps:
                 current_ps = 0
                 for i in range(number_of_hs_in_use):
-                    if pixel_color(520 + 163 * i, 65) == (103, 103, 103) and holding_stations[i] == 1:
+                    if pixel_color(520 + 163 * i, 65) == (76, 76, 76) and holding_stations[i] == 1:
                         holding_stations[i] = 0
-                    elif pixel_color(570 + 163 * i, 110) == (130, 130, 130):
+                    elif pixel_color(570 + 163 * i, 132) == (252, 252, 252):
                         press("tab+" + str(i + 1))
                         holding_stations[i] = 0
-                # for i in range(455, 455 + 162 * number_of_hs_in_use, 162):
-                #     if pixel_color(i, 24) == (108, 108, 108) and holding_stations[(i - 455) // 162] == 1:
-                #         holding_stations[(i - 455) // 162] = 0
-                #     elif pixel_color(i + 114, 137) == (130, 130, 130):
-                #         press("tab+" + str((i - 455) // 162 + 1))
-                #         holding_stations[(i - 455) // 162] = 0
                 for i in range(number_of_hs_in_use):
                     if holding_stations[i] == 0:
                         press(hs_commands[i].strip())

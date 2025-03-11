@@ -1,0 +1,33 @@
+1,Max Wieners,0/8
+2,Biggs Burger,0/9
+3,Eaty's,0/16
+4,chilly bowl,0/8
+5,Chinese Food,0/14
+6,Breakfast & Breakloose,0/16
+7,Gree Itali,0/12
+8,Pizza That!,0/9
+9,All The Sports Grill,0/14
+10,pie right,0/10
+11,Esteban's,0/15
+12,FireKickers,0/14
+13,Food Shackers,0/12
+14,Slammy's,0/14
+15,Burrito,0/12
+16,Contrast Coffee Company,0/14
+17,Planet Blue,0/10
+18,SubSolutions,0/10
+19,The World Tour,0/12
+20,Ooh, Organic!,0/8
+21,poppers & crunchies,0/9
+22,The Deep,0/10
+23,The Far East,0/10
+24,good Japan,0/11
+25,E,0/16
+26,sushi nest,0/10
+27,Welcome to Tasteville,0/14
+28,XLR Purple,0/14
+29,Secrets of the Deep,0/14
+30,absolutely,0/12
+31,sebucosto 1991,0/12
+32,Ueiyav,0/15
+33,Executive's Decision,0/16
