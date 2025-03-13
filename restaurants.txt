@@ -17,7 +17,7 @@
 17,Planet Blue,0/10
 18,SubSolutions,0/10
 19,The World Tour,0/12
-20,Ooh, Organic!,0/8
+20,Ooh Organic!,0/8
 21,poppers & crunchies,0/9
 22,The Deep,0/10
 23,The Far East,0/10

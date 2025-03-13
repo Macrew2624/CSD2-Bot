@@ -200,6 +200,152 @@ def variety_solver(name):
     print(ingredients)
     parts = 0
     match name:
+        case "Custom Steamed Mussles Order":
+            match ingredients[0]:
+                case "Tomato":
+                    press('t')
+                case "Lime Bas.":
+                    press('l')
+                case "Curry":
+                    press('u')
+                case "Chorizo":
+                    press('z')
+                case "Chili":
+                    press('h')
+                case "Coconut":
+                    press('c')
+                case "Red Sauce":
+                    press('r')
+                case "White Wine":
+                    press('w')
+            press('space, m, l, enter')
+
+        case "Custom Souffle Order":
+            for i in ingredients:
+                match i:
+                    case "Choc. Batter":
+                        press('h')
+                    case "Butterscotch Batter":
+                        press('b')
+                    case "Rasp. Batter":
+                        press('r')
+                    case "Vanilla Batter":
+                        press('v')
+                    case "Cinn. Batter":
+                        press('i')
+                    case "Coffee Batter":
+                        press('f')
+                    case "Pist. Batter":
+                        press('p')
+                    case "Cheesy Batter":
+                        press('c')
+                    case "Cin. Powder":
+                        press('n')
+                    case "Pow. Sugar":
+                        press('s')
+                    case "Choc. Powder":
+                        press('c')
+                    case "Choc. Syrup":
+                        press('h')
+                    case "Rasp. Syrup":
+                        press('r')
+                    case "Creme Anglaise":
+                        press('a')
+                    case "Ice Cream":
+                        press('i')
+            press('enter')
+
+        case "Custom Gazpacho Order":
+            if choices == 1:
+                for i in ingredients:
+                    match i:
+                        case "W.Puree":
+                            press('p')
+                        case "Vegetable":
+                            press('v')
+                        case "Tomato":
+                            press('t')
+                        case "B.Bean":
+                            press('b')
+                        case "Avocado":
+                            press('a')
+                        case "Cucumber":
+                            press('c')
+                        case "Watermelon":
+                            press('w')
+                        case "Y.Tomato":
+                            press('y')
+            else:
+                for i in ingredients:
+                    if parts == 0:
+                        match i:
+                            case "Balsamic Oil":
+                                press('b')
+                            case "Olive Oil":
+                                press('o')
+                            case "Cilantro Oil":
+                                press('c')
+                            case "C.Milk":
+                                press('m')
+                    if parts == 1:
+                        match i:
+                            case "Tomatoes":
+                                press('t, space')
+                            case "Shrimp":
+                                press('h, space')
+                            case "Croutons":
+                                press('r, space')
+                            case "Avocado":
+                                press('v, space')
+                            case "Corn":
+                                press('space, r')
+                            case "Lettuce":
+                                press('space, l')
+                            case "Feta Cheese":
+                                press('space, f')
+                            case "Cucumbers":
+                                press('space, u')
+                    if parts == 2:
+                        match i:
+                            case "B.Flower":
+                                press('b')
+                            case "Sm.Flowers":
+                                press('s')
+                            case "Y.Flower":
+                                press('y')
+                            case "P.Flower":
+                                press('p')
+                    parts += 1
+            press('enter')
+
+        case "Custom Carpaccio Order":
+            for i in ingredients:
+                if parts == 0:
+                    match i:
+                        case "Beef":
+                            press('b')
+                        case "Beet Root":
+                            press('r')
+                        case "Pineapple":
+                            press('i')
+                        case "Salmon":
+                            press('s')
+                        case "Tuna":
+                            press('n')
+                        case "Venison":
+                            press('v')
+                    press('space')
+                if parts > 0:
+                    match i:
+                        case "B. Oil Truffle":
+                            press('t')
+                        case "Feta Cheese":
+                            press('f')
+                        case "Lettuce":
+                            press('l')
+                parts += 1
+            press('enter')
+
         case "Delicious Lobster":
             for i in ingredients:
                 match i:
@@ -324,7 +470,7 @@ def variety_solver(name):
                         press('b')
             press('d, enter')
 
-        case "Fresh Fish Daily":
+        case "Fresh Fish Daily" | "Freshly Grilled Fish":
             for i in ingredients:
                 match i:
                     case "Red Snapper":
@@ -341,7 +487,6 @@ def variety_solver(name):
                         press('k')
                     case "Salmon":
                         press('s')
-            press('space, t, h, b, s, enter')
 
         case "Creme Brulee":
             if ingredients[0] != "Torch Hold Button":
@@ -1265,6 +1410,16 @@ def complex_singular_solver(name):
             ingredients.extend(new_ingredient)
     print(ingredients)
     match name:
+        case "Pasta":
+            match ingredients[0]:
+                case "Fusilli":
+                    press('u')
+                case "Fettuccine":
+                    press('f')
+                case "Bowtie":
+                    press('b')
+                case "Pennette":
+                    press('p')
         case "Salsa":
             match ingredients[len(ingredients) - 1]:
                 case "Red Salsa":
@@ -1297,8 +1452,425 @@ def complex_singular_solver(name):
 
 def solver(name):
     match name:
+        case "Custom Steamed Mussles Order":
+            variety_solver(name)
+
+        case "Agedashi Tofu Prep":
+            press('o, t, enter')
+
+        case "01. Vanilla Cake":
+            if pixel_color(610, 1315) == (122, 65, 201):
+                press('v')
+            else:
+                press('l, v, l, v, l, a, enter')
+        case "02. Chocolate Cake":
+            if pixel_color(610, 1315) == (122, 65, 201):
+                press('c')
+            else:
+                press('l, c, l, c, l, o, enter')
+        case "03. Strawberry Cake":
+            if pixel_color(610, 1315) == (122, 65, 201):
+                press('s')
+            else:
+                press('l, v, l, v, l, a, enter')
+        case "04. Red Velvet Cake":
+            if pixel_color(610, 1315) == (122, 65, 201):
+                press('r')
+            else:
+                press('l, v, l, v, l, a, enter')
+        case "05. Banana Cake":
+            if pixel_color(610, 1315) == (122, 65, 201):
+                press('b')
+            else:
+                press('l, v, l, v, l, a, enter')
+        case "06. German White Chocolate Cake":
+            if pixel_color(610, 1315) == (122, 65, 201):
+                press('v')
+            else:
+                press('l, g, l, g, l, e, enter')
+        case "07. German Dark Choc. Cake":
+            if pixel_color(610, 1315) == (122, 65, 201):
+                press('c')
+            else:
+                press('l, g, l, g, l, e, enter')
+        case "08. Choc. Banana Cake":
+            if pixel_color(610, 1315) == (122, 65, 201):
+                press('b')
+            else:
+                press('l, c, l, c, l, o, enter')
+
+        case "01. Ham and Turkey":
+            press('h, u, space, c, l, t, space, w, enter')
+        case "02. The Italian":
+            press('h, c, s, space, s, v, l, t, space, r, enter')
+        case "03. The Super":
+            press('h, b, s, space, s, l, n, space, v, w, enter')
+        case "04. Coney Island":
+            press('u, space, l, t, space, n, w, enter')
+        case "05. Tuna Tub":
+            press('n, space, l, t, space, b, g, n, h, enter')
+        case "06. Roast Beef Stack":
+            press('r, space, c, v, l, n, space, r, enter')
+        case "07. Meatball Sub":
+            press('m, space, v, space, w, enter')
+        case "08. Veggie Mix":
+            press('u, space, l, t, n, j, space, u, n, h, enter')
+        case "09. The Wicked":
+            press('h, u, b, space, c, s, v, l, space, r, enter')
+        case "10. The Angry Chef":
+            press('h, s, space, t, space, v, w, enter')
+        case "11. Shove Sub":
+            press('c, space, c, s, v, space, u, n, r, enter')
+        case "12. Kitchen Works":
+            press('c, r, space, l, t, n, space, n, r, enter')
+        case "13. Wacky Deli":
+            press('h, s, space, c, space, w, enter')
+        case "14. Thrust Puncher":
+            press('u, space, c, v, space, v, r, enter')
+        case "15. The Scale Tipper":
+            press('h, b, space, s, space, v, r, enter')
+        case "16. Blast Tuna":
+            press('n, space, l, j, space, b, g, h, enter')
+        case "17. World Ender":
+            press('b, c, s, space, n, p, space, v, b, u, w, enter')
+        case "18. Obese Jake's POWERSUB":
+            press('h, u, b, c, r, s, space, c, s, v, space, r, enter')
+        case "19. Spicy Battleground":
+            press('r, space, v, n, j, space, b, g, w, enter')
+        case "20. Thigh Smasher":
+            press('h, u, b, space, c, p, space, v, b, u, r, enter')
+
+        case "01. Gametomo Special":
+            press('n, a, space, p, r, enter')
+        case "02. Collector":
+            press('s, a, space, n, r, enter')
+        case "03. Gold Coin":
+            press('m, a, space, g, o, enter')
+        case "04. Fireside":
+            press('s, a, space, p, r, enter')
+        case "05. Relaxed":
+            press('n, a, space, p, g, enter')
+        case "06. Scaled":
+            press('m, a, space, k, o, enter')
+        case "07. Ark":
+            press('s, a, space, y, n, enter')
+
+        case "Custom Souffle Order":
+            variety_solver(name)
+
+        case "Custom Gazpacho Order":
+            variety_solver(name)
+
+        case "01. Standard Mix":
+            press('p, k, b, v, enter')
+        case "02. Meat Mix":
+            press('s, k, b, b, enter')
+        case "03. Shrimp Mix":
+            press('q, v, h, h, enter')
+        case "04. Veggie Mix":
+            press('q, p, v, v, enter')
+        case "05. Beef Mix":
+            press('q, b, b, v, enter')
+        case "06. Chicken Mix":
+            press('q, s, k, k, enter')
+        case "07. Squash Mix":
+            press('q, q, s, p, enter')
+        case "08. Tofu Mix":
+            press('p, v, t, t, enter')
+        case "09. Shrimp Mix":
+            press('v, v, h, h, enter')
+        case "10. Sausage Mix":
+            press('q, q, s, s, enter')
+        case "11. Festive Mix":
+            press('q, s, h, t, enter')
+        case "12. Fiesta Mix":
+            press('q, s, b, v, enter')
+        case "13. Mexico Mix":
+            press('p, k, h, t, enter')
+        case "14. Sky Mix":
+            press('q, k, b, t, enter')
+        case "15. Blast Mix":
+            press('s, p, v, h, enter')
+        case "16. Summer Mix":
+            press('p, b, v, t, enter')
+        case "17. Spring Mix":
+            press('q, s, p, k, enter')
+        case "18. Simple Meat Mix":
+            press('k, k, b, b, enter')
+        case "19. Simple Green Mix":
+            press('q, q, p, p, enter')
+        case "20. Simple Chicken Mix":
+            press('k, k, t, t, enter')
+
+        case "01. Mediterranean":
+            press('s, k, t, c, u, o, space, n, c, enter')
+        case "02. Floating Islands of Japan":
+            press('s, c, u, q, space, b, h, n, g, enter')
+        case "03. Remember California":
+            press('k, t, c, w, space, h, n, c, g, enter')
+        case "04. Reef Paradise":
+            press('s, k, c, u, q, w, space, h, c, enter')
+        case "05. Classic Fishnet":
+            press('t, c, o, w, space, b, h, n, c, enter')
+        case "06. The Ocean Blue":
+            press('k, t, c, q, w, space, b, h, g, enter')
+        case "07. Atlantic Special":
+            press('k, u, o, q, w, space, h, n, c, enter')
+        case "08. Pacific Coast":
+            press('s, k, t, q, space, b, n, c, g, enter')
+
+        case "01. Mushroom Risotto":
+            press('o, m, space, o, c, m, p, space, r, enter')
+        case "02. Green Pea Risotto":
+            press('o, p, space, k, p, space, s, r, enter')
+        case "03. Red Wine Risotto":
+            press('o, r, space, o, c, a, b, space, r, enter')
+        case "04. Classic Risotto":
+            press('o, c, space, o, c, m, p, space, r, enter')
+        case "05. Butternut Risotto":
+            press('o, b, space, a, k, s, space, r, enter')
+        case "06. Red Tomato Risotto":
+            press('o, t, space, b, p, space, s, r, enter')
+
+        case "01. Classic Quiche":
+            press('c, v, space, s, t, m, e, z, enter')
+        case "02. Breakfast Quiche":
+            press('c, n, b, a, h, s, space, t, e, c, enter')
+        case "03. Spinach Quiche":
+            press('c, a, v, space, s, m, e, z, enter')
+        case "04. Cheesy Quiche":
+            press('c, n, a, space, Broccoli e, c, z, enter')
+        case "05. Queen Quiche":
+            press('c, p, a, space, s, t, m, e, z, enter')
+
+        case "01. Chicken Pot Pie":
+            press('s, r, k, a, c, space, c, enter')
+        case "02. Veggie Pot Pie":
+            press('s, r, a, b, c, e, p, space, c, enter')
+        case "03. Loaded Pot Pie":
+            press('s, r, k, a, b, c, e, p, space, p, c, enter')
+
+        case "Escargot":
+            press('e, e, e, e, e, e, t, enter')
+
+        case "Custom Carpaccio Order":
+            variety_solver(name)
+
+        case "Pro.Wellington, Blue Rare" | "Pro.Wellington, Rare" | "Pro.Wellington, Medium Rare" | "Pro.Wellington, Medium" | "Pro.Wellington, Medium Well" | "Pro.Wellington, Well Done":
+            press('p, v, r, w, s, space, u, s, enter')
+        case "Beef Wellington, Blue Rare" | "Beef Wellington, Rare" | "Beef Wellington, Medium Rare" | "Beef Wellington, Medium" | "Beef Wellington, Medium Well" | "Beef Wellington, Well Done":
+            press('p, d, b, w, s, space, u, s, enter')
+
+        case "Bananas Foster":
+            press('u, s, b, r, enter')
+
+        case "Waffle Prep":
+            press('w, l, enter')
+
+        case "01. Maple Waffles":
+            press('w, m, enter')
+        case "02. Blueberry Waffles":
+            press('w, l, enter')
+        case "03. Strawberry Waffles":
+            press('w, s, enter')
+
         case "Delicious Lobster":
             variety_solver(name)
+
+        case "01. New York Sliders":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, l, v, n, space, r, enter')
+            else:
+                press('b, o, enter')
+        case "02. Fishnet Silvers":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, n, space, p, s, r, enter')
+            else:
+                press('b, o, enter')
+        case "03. Punk Classic":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, a, c, space, t, z, enter')
+            else:
+                press('b, o, enter')
+        case "04. The Resistance":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, l, space, p, t, z, enter')
+            else:
+                press('b, o, enter')
+        case "05. Meat and Greet":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, a, c, space, r, enter')
+            else:
+                press('b, o, enter')
+        case "06. i94":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, v, n, e, space, r, enter')
+            else:
+                press('b, o, enter')
+        case "07. Chicken Whispers":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, a, v, space, p, r, enter')
+            else:
+                press('k, o, enter')
+        case "08. Pink Chevy 74'":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, c, space, s, t, r, enter')
+            else:
+                press('k, o, enter')
+        case "09. Egg and Sons":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, a, c, e, space, z, enter')
+            else:
+                press('k, o, enter')
+        case "10. Autumn Bits":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, n, space, p, s, r, enter')
+            else:
+                press('k, o, enter')
+        case "11. 1967 New England Dunkers":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, l, a, c, n, space, s, t, z, enter')
+            else:
+                press('k, o, enter')
+        case "12. Pop POPS":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, l, c, space, r, enter')
+            else:
+                press('k, o, enter')
+
+        case "01. Italian Marinara":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('t, s, space, r, t, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('o, s, enter')
+        case "02. Tomato Delight":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('n, space, m, r, t, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('enter')
+        case "03. Red Ribbon":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, v, k, space, r, t, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('o, k, enter')
+        case "04. Red Sea":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('n, h, space, m, r, s, t, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('o, h, enter')
+        case "05. Classic Roma":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('space, r, t, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('enter')
+        case "06. Pesto Channel":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('n, k, space, m, e, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('o, k, enter')
+        case "07. Green Envy":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, space, r, s, e, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('o, k, enter')
+        case "08. Chunky Pesto":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('n, b, r, space, r, e, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('enter')
+        case "09. Simple Pesto":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('space, e, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('enter')
+        case "10. Seaside":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, v, h, space, m, r, e, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('o, h, enter')
+        case "11. Festival of Delicious":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, r, k, space, r, a, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('o, k, enter')
+        case "12. Cheesy Peppers":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('s, space, m, p, a, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('o, s, enter')
+        case "13. Chicken Alfredo":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('k, space, r, a, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('o, k, enter')
+        case "14. Chicken Carbonara":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('b, k, space, s, a, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('o, k, enter')
+        case "15. Simple Alfredo":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('space, a, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('enter')
+        case "16. Simple Tomato":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('space, t, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('enter')
+        case "17. Dry Desert":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('n, space, s, p, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('enter')
+        case "18. Bachelor Bowl":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('space, r, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('enter')
+        case "19. Veggie Pesto":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('n, r, v, space, p, e, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('enter')
+        case "20. Veggie Tomato":
+            if pixel_color(2305, 775) == (97, 30, 30):
+                press('n, r, v, space, p, t, enter')
+            else:
+                complex_singular_solver("Pasta")
+                press('enter')
+
+        case "01. Classic Omelette":
+            press('e, c, b, t, m, space, p, enter')
+        case "02. Hammy Sunrise":
+            press('e, h, c, b, enter')
+        case "03. The Pepper and the Egg":
+            press('e, c, space, g, r, y, p, enter')
+        case "04. The Ooze-Cheesy Squeezy":
+            press('e, z, c, n, space, s, enter')
+        case "05. Deluxe Omelette":
+            press('e, z, c, b, t, n, space, s, p, enter')
+        case "06. Ultra Veggie Stacker":
+            press('e, z, t, m, n, space, g, r, p, enter ')
 
         case "King Lobster":
             press('k, enter')
@@ -1769,6 +2341,11 @@ def solver(name):
 
         case "Fresh Fish Daily":
             variety_solver(name)
+            press('space, t, h, b, s, enter')
+
+        case "Freshly Grilled Fish":
+            variety_solver(name)
+            press('enter')
 
         case "Creme Brulee":
             variety_solver(name)
